@@ -1,0 +1,10 @@
+
+# dotenv environment variables file
+.env
+.env.test
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Dependency directories
+node_modules/
