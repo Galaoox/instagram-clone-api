@@ -1,1 +1,1 @@
-web: tsc && node ./build/server.js
+web: npm run prod
