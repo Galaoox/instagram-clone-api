@@ -5,8 +5,10 @@ import cors from 'cors';
 // import passportMiddleware from './middlewares/passport';
 import indexRoutes from './index.routes';
 
-// Init app
+// Inicializo la app
 const app = express();
+
+
 
 // Midlewares
 app.use(morgan('dev'));

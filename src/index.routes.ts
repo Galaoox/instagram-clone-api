@@ -2,9 +2,15 @@ import Router from 'express';
 
 const router = Router();
 
-// route para probar que la api este funcionando
-router.get('/test', (req, res) =>
-    res.send('OK')
+
+router.get('/', (req, res) =>
+	res.send('OK')
+);
+
+
+
+router.post('/pruenas/', (req, res) =>
+	res.json({ id: req.body.id })
 );
 
 export default router;
