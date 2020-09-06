@@ -1,16 +1,12 @@
 import Router from 'express';
-
 const router = Router();
+import AuthRoutes from './routes/auth.route';
 
 
 router.get('/', (req, res) =>
 	res.send('OK')
 );
+router.use('/auth', AuthRoutes);
 
-
-
-router.post('/pruenas/', (req, res) =>
-	res.json({ id: req.body.id })
-);
 
 export default router;

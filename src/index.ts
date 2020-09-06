@@ -1,9 +1,10 @@
-import express, { Request, Response, Router } from 'express';
+import express from 'express';
 import morgan from 'morgan';
 import passport from 'passport';
 import cors from 'cors';
-// import passportMiddleware from './middlewares/passport';
+import passportMiddleware from './middlewares/passport.middleware';
 import indexRoutes from './index.routes';
+
 
 // Inicializo la app
 const app = express();
@@ -16,7 +17,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(passport.initialize());
-// passport.use(passportMiddleware); TODO: descomentar esta linea de codigo para el passport con jwt
+passport.use(passportMiddleware);
 
 // Routes
 app.use(indexRoutes);
