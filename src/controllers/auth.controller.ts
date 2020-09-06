@@ -1,14 +1,11 @@
 import express, { Request, Response } from "express";
 import { IUser } from '../models/user.model';
-import jwt from 'jsonwebtoken';
-import config from '../config/keys';
 import pool from '../config/database';
 import { encrypt, comparePassword } from "../util/bcrypt";
+import { createToken } from '../util/common';
 
 
-function createToken(user: Partial<IUser>) {
-    return jwt.sign({ id: user.id, email: user.email }, config.jwtSecret);
-}
+
 
 /**
  * Crea un usuario y realiza validaciones sobre los datos
