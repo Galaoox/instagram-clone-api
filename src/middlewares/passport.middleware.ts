@@ -14,7 +14,7 @@ export default new Strategy(opciones, async (payload, done) => {
     try {
 
         findUserById(payload.id as number, (results: any) => {
-            const user: User | null = (<Array<any>>results).length ? results[0] : null;
+            const user: User | null = (<Array<any>>results)?.length ? results[0] : null;
             if (user) {
                 return done(null, user);
             } else {
@@ -23,6 +23,6 @@ export default new Strategy(opciones, async (payload, done) => {
         });
 
     } catch (error) {
-        console.log(error);
+        console.log("Passport" + error);
     }
 });

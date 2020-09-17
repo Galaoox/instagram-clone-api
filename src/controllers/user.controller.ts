@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { User } from '../util/models/user';
 import pool from '../config/database';
 import { comparePassword, encrypt } from "../util/bcrypt";
 import { createToken } from '../util/common';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { updateInfoProfile, ParamsUpdateInfoProfile } from '../models/user.model';
+import { updateInfoProfile, ParamsUpdateInfoProfile, checkUsernameIsUsed } from '../models/user.model';
 
 
 
@@ -29,7 +29,7 @@ export const getDataEditProfile = async (req: Request, res: Response) => {
         res.json({ ...data });
     } catch (error) {
         console.log(error);
-        res.json({ error });
+        res.sendStatus(401).json({ msg: 'Ha ocurrido un error intenta mas tarde' });
     }
 
 }
@@ -48,28 +48,49 @@ export const updateProfile = async (req: Request, res: Response) => {
             image
         } = req.body;
         const user: User = req.user as User;
-        const path = uploadImage(image);
+        const path = await uploadImage(image);
+        path && deleteImage('./src/' + (<string>user.imageUrl));
         const data = {
             name, username, biography, path: path ? path : user.imageUrl, id: user.id, webSite
         } as ParamsUpdateInfoProfile;
-        updateInfoProfile(data, () => {
-            return res.status(201).json({
+        await checkUsernameIsUsed({ username, id: user.id }, (results: any) => {
+            const user = (<Array<any>>results).length ? results[0] : null;
+            if (user) res.sendStatus(401).json({ msg: 'El usuario ingresado ya se encuentra en uso' });
+        })
+        await updateInfoProfile(data, () => {
+            res.json({
                 msg: 'Perfil editado exitosamente'
             });
         })
 
     } catch (error) {
-        console.log(error);
-        res.status(400).json({ msg: error });
+        console.log("function updateProfile" + error);
+        res.sendStatus(400).json({ msg: 'Ha ocurrido un error' });
     }
 }
 
-function uploadImage(image: { typeImage: string, base64: string }) {
-    const filePath = image ? "uploads/" + uuidv4() + '.' + image.typeImage : null;
-    fs.writeFile(`./src/${filePath}`, image.base64, 'base64', (err) => {
-        if (err) throw err
-    });
-    return filePath;
+async function uploadImage(image: { typeImage: string, base64: string }) {
+    if (image) {
+        const filePath = image ? "uploads/" + uuidv4() + '.' + image.typeImage : null;
+        try {
+            fs.writeFile(`./src/${filePath}`, image.base64, 'base64', (err) => {
+                if (err) throw err
+            });
+            return filePath;
+        } catch (error) {
+            console.error(error)
+
+        }
+    }
+    return null;
+}
+
+function deleteImage(path: string) {
+    try {
+        fs.unlinkSync(path)
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 
@@ -109,7 +130,7 @@ export const updateEmail = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.log(error);
-        res.status(400).json({ error });
+        res.status(400).json({ msg: 'Ha ocurrido un error intenta mas tarde' });
     }
 }
 /**
@@ -151,7 +172,7 @@ export const updatePassword = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.log(error);
-        res.status(400).json({ error });
+        res.status(400).json({ msg: 'Ha ocurrido un error intenta mas tarde' });
     }
 }
 

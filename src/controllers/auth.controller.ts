@@ -102,14 +102,14 @@ export const singIn = async (req: Request, res: Response) => {
                     } else {
                         const match = await comparePassword(req.body.password, user.password)
                         if (match) {
-                            return res.status(200).json({
+                            res.json({
                                 token: createToken({ id: user.id, email: user.email }),
                                 name: user.name,
                                 username: user.username,
                                 msg: "Inicio sessión correctamente"
                             });
                         } else {
-                            return res.status(400).json({ msg: "La contraseña no coincide" });
+                            res.status(400).json({ msg: "La contraseña no coincide" });
                         }
                     }
                 }
