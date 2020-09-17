@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { IUser } from '../models/user.model';
+import { IUser } from '../util/models/user.model';
 import pool from '../config/database';
 import { encrypt, comparePassword } from "../util/bcrypt";
 import { createToken } from '../util/common';
@@ -12,6 +12,7 @@ import { createToken } from '../util/common';
  */
 export const singUp = async (req: Request, res: Response) => {
     try {
+        debugger;
         if (!req.body.email || !req.body.password) {
             return res.status(400).json({ msg: 'Ingrese su correo y su contraseña' });
         } else if (!req.body.name) {
@@ -27,10 +28,8 @@ export const singUp = async (req: Request, res: Response) => {
             (error, results, fields) => {
                 if (error) { console.log(error); }
                 if (results[0]) {
-                    const user = results;
+                    const user = results[0];
                     if (user) {
-                        console.log(results[0], "pruebas");
-
                         return res.status(400).json({ msg: 'El email ya se encuentra registrado' });
                     }
                 }
@@ -65,7 +64,6 @@ export const singUp = async (req: Request, res: Response) => {
             (error, results, fields) => {
                 if (error) { console.log(error); }
                 if (results) {
-                    console.log(results);
                     return res.status(201).json({
                         token: createToken({ id: results.insertId, email: data.email }),
                         name: data.name,
@@ -90,6 +88,7 @@ export const singIn = async (req: Request, res: Response) => {
         if (!req.body.email || !req.body.password) {
             return res.status(400).json({ msg: 'Ingrese sus correo y su contraseña' });
         }
+        console.log(req.body);
         /**
          * Valido que exista el email en la bd
          */
@@ -102,7 +101,6 @@ export const singIn = async (req: Request, res: Response) => {
                         return res.status(400).json({ msg: "El correo electronico no existe" });
                     } else {
                         const match = await comparePassword(req.body.password, user.password)
-
                         if (match) {
                             return res.status(200).json({
                                 token: createToken({ id: user.id, email: user.email }),

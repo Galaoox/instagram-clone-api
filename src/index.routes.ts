@@ -5,9 +5,7 @@ import UserRoutes from './routes/user.routes';
 
 
 
-router.get('/', (req, res) =>
-	res.send('OK')
-);
+
 router.use('/auth', AuthRoutes);
 router.use('/user', UserRoutes);
 

@@ -1,14 +1,13 @@
 import { Router } from 'express';
 import passport from 'passport';
 import upload from '../util/multer';
-import { getDataEditProfile, updateEmail, updatePassword } from '../controllers/user.controller';
+import { getDataEditProfile, updateEmail, updatePassword, updateProfile } from '../controllers/user.controller';
 const router: Router = Router();
 
 // editar usuario
-// router.post('/showDataEdit',
-//     passport.authenticate('jwt', { session: false }),
-//     upload.single('image'),
-//     getDataEditProfile);
+router.put('/editProfile',
+    passport.authenticate('jwt', { session: false }),
+    updateProfile);
 
 // mostrar informacion usuario al editar
 router.get('/showDataEdit',

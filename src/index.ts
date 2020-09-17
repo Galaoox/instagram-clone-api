@@ -4,18 +4,17 @@ import passport from 'passport';
 import cors from 'cors';
 import passportMiddleware from './middlewares/passport.middleware';
 import indexRoutes from './index.routes';
+import path from 'path';
 
 
 // Inicializo la app
 const app = express();
 
-
-
 // Midlewares
 app.use(morgan('dev'));
 app.use(cors());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '15MB' }));
 app.use(passport.initialize());
 passport.use(passportMiddleware);
 
@@ -23,6 +22,7 @@ passport.use(passportMiddleware);
 app.use(indexRoutes);
 
 // Config
+app.use('/uploads', express.static(path.join(__dirname + '/uploads')));
 
 
 export default app;

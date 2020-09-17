@@ -1,7 +1,8 @@
 import { Strategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 import config from '../config/keys';
 import pool from '../config/database';
-import { IUser } from '../models/user.model';
+import { User } from '../util/models/user.model';
+import { findUserById } from '../models/user.model';
 
 
 const opciones: StrategyOptions = {
@@ -11,18 +12,15 @@ const opciones: StrategyOptions = {
 
 export default new Strategy(opciones, async (payload, done) => {
     try {
-        await pool.query('SELECT * FROM users where id =  ?', payload.id,
-            (error, results, fields) => {
-                if (error) { console.log(error); }
-                if (results[0]) {
-                    const user: IUser = results[0]
-                    if (user) {
-                        return done(null, user);
-                    } else {
-                        return done(null, false);
-                    }
-                }
-            });
+
+        findUserById(payload.id as number, (results: any) => {
+            const user: User | null = (<Array<any>>results).length ? results[0] : null;
+            if (user) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
+        });
 
     } catch (error) {
         console.log(error);
