@@ -1,7 +1,7 @@
 import { Strategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 import config from '../config/keys';
 import pool from '../config/database';
-import { User } from '../util/models/user.model';
+import { User } from '../util/models/user';
 import { findUserById } from '../models/user.model';
 
 

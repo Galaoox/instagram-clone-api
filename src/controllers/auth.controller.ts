@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { IUser } from '../util/models/user.model';
+import { IUser } from '../util/models/user';
 import pool from '../config/database';
 import { encrypt, comparePassword } from "../util/bcrypt";
 import { createToken } from '../util/common';

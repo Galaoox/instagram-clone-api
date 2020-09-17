@@ -1,4 +1,4 @@
-import { User } from './models/user.model';
+import { User } from './models/user';
 import jwt from 'jsonwebtoken';
 import config from '../config/keys';
 import pool from '../config/database';
