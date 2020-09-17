@@ -24,6 +24,5 @@ export default new Strategy(opciones, async (payload, done) => {
 
     } catch (error) {
         console.log(error);
-
     }
 });
