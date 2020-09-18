@@ -5,7 +5,9 @@ import { comparePassword, encrypt } from "../util/bcrypt";
 import { createToken } from '../util/common';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { updateInfoProfile, ParamsUpdateInfoProfile, checkUsernameIsUsed } from '../models/user.model';
+import { updateInfoProfile, ParamsUpdateInfoProfile, } from '../models/user.model';
+import { checkUsernameIsUsed } from '../models/auth.model';
+
 
 
 

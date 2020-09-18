@@ -1,8 +1,9 @@
 import express, { Request, Response } from "express";
-import { IUser } from '../util/models/user';
+import { User } from '../util/models/user';
 import pool from '../config/database';
 import { encrypt, comparePassword } from "../util/bcrypt";
 import { createToken } from '../util/common';
+import { checkUsernameIsUsed, checkEmailIsUsed, registerUser } from "../models/auth.model";
 
 
 
@@ -12,75 +13,43 @@ import { createToken } from '../util/common';
  */
 export const singUp = async (req: Request, res: Response) => {
     try {
-        debugger;
-        if (!req.body.email || !req.body.password) {
-            return res.status(400).json({ msg: 'Ingrese su correo y su contraseña' });
-        } else if (!req.body.name) {
-            return res.status(400).json({ msg: 'Ingrese su nombre' });
-        }
-        else if (!req.body.username) {
-            return res.status(400).json({ msg: 'Ingrese el usuario' });
-        }
-        /**
-         * Valido que el email no este usado
-         */
-        await pool.query('SELECT * FROM users where email =  ?', req.body.email,
-            (error, results, fields) => {
-                if (error) { console.log(error); }
-                if (results[0]) {
-                    const user = results[0];
-                    if (user) {
-                        return res.status(400).json({ msg: 'El email ya se encuentra registrado' });
-                    }
-                }
+        const { email, password, username, name } = req.body;
+        validateRequestsingUp(res, { email, password, username, name });
+        await checkEmailIsUsed({ email, }, (results: any) => {
+            const user = (<Array<any>>results).length ? results[0] : null;
+            if (user) res.sendStatus(401).json({ msg: 'El correo electronico ya se encuentra registrado' });
+        })
+        await checkUsernameIsUsed({ username, }, (results: any) => {
+            const user = (<Array<any>>results).length ? results[0] : null;
+            if (user) res.sendStatus(401).json({ msg: 'El usuario ingresado ya se encuentra registrado' });
+        })
+        const data = { name, username, password: await encrypt(password), email }
+        await registerUser(data, (results: any) => {
+            return res.status(201).json({
+                token: createToken({ id: results.insertId, email: data.email }),
+                name: data.name,
+                username: data.username,
+                msg: 'Usuario creado exitosamente'
             });
-
-        /**
-         * Valido que el username no este usado
-         */
-        await pool.query('SELECT * FROM users where username =  ?', req.body.username,
-            (error, results, fields) => {
-                if (error) { console.log(error); }
-                if (results[0]) {
-                    const user = results[0];
-                    if (user) {
-                        return res.status(400).json({ msg: 'El username ya se encuentra registrado' });
-                    }
-                }
-            });
-
-        const data = await {
-            name: req.body.name,
-            username: req.body.username,
-            password: await encrypt(req.body.password),
-            email: req.body.email
-
-        }
-
-        /**
-         * Realiza la creacion del usuario en la bd y genera el token y retorna los datos del usuario y el token
-         */
-        await pool.query('INSERT INTO users SET ? ', [data],
-            (error, results, fields) => {
-                if (error) { console.log(error); }
-                if (results) {
-                    return res.status(201).json({
-                        token: createToken({ id: results.insertId, email: data.email }),
-                        name: data.name,
-                        username: data.username,
-                        msg: 'Usuario creado exitosamente'
-                    });
-                }
-            });
-
-
-
-
+        });
     } catch (error) {
         console.log(error);
         res.json({ error });
     }
 }
+
+function validateRequestsingUp(res: Response, params: { email: string, password: string, username: string, name: string }) {
+    if (!params.email || !params.password) {
+        return res.status(400).json({ msg: 'Ingrese su correo y su contraseña' });
+    } else if (!params.name) {
+        return res.status(400).json({ msg: 'Ingrese su nombre' });
+    }
+    else if (!params.username) {
+        return res.status(400).json({ msg: 'Ingrese el usuario' });
+    }
+}
+
+
 // iniciar sesion
 
 export const singIn = async (req: Request, res: Response) => {
@@ -96,7 +65,7 @@ export const singIn = async (req: Request, res: Response) => {
             async (error, results, fields) => {
                 if (error) { console.log(error); }
                 if (results[0]) {
-                    const user: IUser = results[0];
+                    const user: User = results[0];
                     if (!user) {
                         return res.status(400).json({ msg: "El correo electronico no existe" });
                     } else {

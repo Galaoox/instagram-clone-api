@@ -1,4 +1,3 @@
-import pool from '../config/database';
 import { query } from '../util/common';
 export interface ParamsUpdateInfoProfile {
     name: string;
@@ -21,8 +20,3 @@ export async function findUserById(idUser: number, callback: Function) {
     query(sql, idUser, callback);
 }
 
-export async function checkUsernameIsUsed(user: { username: string, id?: number }, callback: Function) {
-    const condition = 'AND id != ?'
-    const sql = `SELECT * FROM users where username =  ? ${user.id ? condition : ''}`;
-    query(sql, Object.values(user), callback)
-}
