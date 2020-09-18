@@ -16,10 +16,8 @@ export const singUp = async (req: Request, res: Response, next: NextFunction) =>
         const data = { name, username, password: await encrypt(password), email }
         const userRegistered: any = await registerUser(data);
         return res.status(201).json({
-            token: createToken({ id: userRegistered.insertId, email: data.email }),
-            name: data.name,
-            username: data.username,
-            msg: 'Usuario creado exitosamente'
+            msg: 'Usuario creado exitosamente',
+            ...authResponseWithToken({ ...data, id: userRegistered.insertId })
         });
     } catch (error) {
         console.log("Auth.controller singUp", error);
@@ -47,10 +45,8 @@ export const singIn = async (req: Request, res: Response) => {
             const match = await comparePassword(password, user.password)
             if (match) {
                 res.json({
-                    token: createToken({ id: user.id, email: user.email }),
-                    name: user.name,
-                    username: user.username,
-                    msg: "Inicio sessión correctamente"
+                    msg: "Inicio sessión correctamente",
+                    ...authResponseWithToken(user)
                 });
             } else {
                 res.status(400).json({ msg: "La contraseña es incorrecta" });
@@ -68,5 +64,16 @@ export const singIn = async (req: Request, res: Response) => {
 function validateRequestSingIn(res: Response, params: { email: string, password: string }) {
     if (!params.email || !params.password) {
         return res.status(400).json({ msg: 'Ingrese sus correo y su contraseña' });
+    }
+}
+
+export function authResponseWithToken(user: Partial<User>) {
+    return {
+        token: createToken({ id: user.id, email: user.email }),
+        name: user.name,
+        username: user.username,
+        imageUrl: user?.imageUrl ?? null,
+        biography: user?.biography ?? null,
+        webSite: user?.webSite ?? null
     }
 }
