@@ -17,6 +17,6 @@ pool.getConnection((error, connection) => {
     }
 });
 
-
+pool.query = promisify(pool.query) as any;
 
 export default pool;

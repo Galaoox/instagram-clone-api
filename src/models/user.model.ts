@@ -1,4 +1,6 @@
-import { query } from '../util/common';
+import pool from '../config/database';
+import { findBy } from './model';
+import { User } from '../util/models/user';
 export interface ParamsUpdateInfoProfile {
     name: string;
     username: string;
@@ -8,15 +10,20 @@ export interface ParamsUpdateInfoProfile {
     id: number;
 }
 
-export async function updateInfoProfile(data: ParamsUpdateInfoProfile, callback: Function) {
-    console.log(data);
+export async function updateInfoProfile(data: ParamsUpdateInfoProfile) {
     const sql = `UPDATE users SET name =  ? , username =  ?,
     biography =  ?, webSite =  ?, imageUrl = ?  WHERE id = ?`;
-    query(sql, [data.name, data.username, data.biography, data.webSite, data.path, data.id], callback);
+    return await pool.query(sql, [data.name, data.username, data.biography, data.webSite, data.path, data.id]);
 }
 
-export async function findUserById(idUser: number, callback: Function) {
-    const sql = 'SELECT * FROM users where id =  ?';
-    query(sql, idUser, callback);
+export async function findUserById(id: number): Promise<Partial<User> | null> {
+    return await findBy('users', { id });
 }
+export async function findUserByEmail(email: string): Promise<Partial<User> | null> {
+    return await findBy('users', { email });
+}
+
+
+
+
 

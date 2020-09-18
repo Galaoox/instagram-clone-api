@@ -6,8 +6,8 @@ export async function encrypt(password: string) {
 }
 
 
-export async function comparePassword(password: string, passwordBd: string): Promise<Boolean> {
+export async function comparePassword(password: string, passwordBd: string = ''): Promise<Boolean> {
 
-    return await bcrypt.compare(password, passwordBd);
+    return password && passwordBd ? await bcrypt.compare(password, passwordBd) : false;
 
 }
