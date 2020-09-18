@@ -77,3 +77,11 @@ export function authResponseWithToken(user: Partial<User>) {
         webSite: user?.webSite ?? null
     }
 }
+
+export function logout(req: Request, res: Response) {
+    try {
+        req.logOut();
+    } catch (error) {
+        console.log('logout', error);
+    }
+}
