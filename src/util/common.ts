@@ -19,7 +19,7 @@ export function deleteImage(path: string) {
     }
 }
 /**
- * 
+ * Realiza la subida(creacion) de un archivo en este caso en base64
  * @param image JSON que contiene el tipo de imagen y el archivo en base64
  */
 export async function uploadImage(image: { typeImage: string, base64: string }) {

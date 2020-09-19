@@ -4,7 +4,12 @@ import { createToken } from '../util/common';
 import { checkUsernameIsUsed, checkEmailIsUsed, registerUser } from "../models/auth.model";
 import { findUserByEmail } from "../models/user.model";
 import { User } from '../util/models/user';
-
+/**
+ * Realiza el registro de un usuario
+ * @param req 
+ * @param res 
+ * @param next 
+ */
 export const singUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email, password, username, name } = req.body;
@@ -24,7 +29,11 @@ export const singUp = async (req: Request, res: Response, next: NextFunction) =>
         return res.status(401).json({ error });
     }
 }
-
+/**
+ * Realiza la validacion de los parametros usados en la funcion SingUp
+ * @param res 
+ * @param params 
+ */
 function validateRequestSingUp(res: Response, params: { email: string, password: string, username: string, name: string }) {
     if (!params.email || !params.password) {
         return res.status(400).json({ msg: 'Ingrese su correo y su contraseña' });
@@ -35,7 +44,11 @@ function validateRequestSingUp(res: Response, params: { email: string, password:
         return res.status(400).json({ msg: 'Ingrese el usuario' });
     }
 }
-
+/**
+ * Realiza la autenticacion del usuario
+ * @param req 
+ * @param res 
+ */
 export const singIn = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
@@ -60,13 +73,22 @@ export const singIn = async (req: Request, res: Response) => {
     }
 
 }
-
+/**
+ * Realiza multiples validaciones a los parametros que recibe el metodo SingIn
+ * @param res 
+ * @param params 
+ */
 function validateRequestSingIn(res: Response, params: { email: string, password: string }) {
     if (!params.email || !params.password) {
         return res.status(400).json({ msg: 'Ingrese sus correo y su contraseña' });
     }
 }
 
+/**
+ * Realiza la creacion del JSON  usado para retornar informacion clave para la autenticacion 
+ * y visualizacion de la informacion de un usuario
+ * @param user informacion necesario para crear el token del usuario
+ */
 export function authResponseWithToken(user: Partial<User>) {
     return {
         token: createToken({ id: user.id, email: user.email }),
@@ -77,7 +99,11 @@ export function authResponseWithToken(user: Partial<User>) {
         webSite: user?.webSite ?? null
     }
 }
-
+/**
+ * Realiza el proceso de cerrar sesión
+ * @param req 
+ * @param res 
+ */
 export function logout(req: Request, res: Response) {
     try {
         req.logOut();
