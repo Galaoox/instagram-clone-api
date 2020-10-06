@@ -81,7 +81,8 @@ function generateConditionsQuery(columns: Object | JSON) {
  * @param columns nombres de las columnas 
  */
 function generateSettersQuery(columns: Object | JSON) {
+    const lenght = Object.keys(columns).length;
     return Object.keys(columns).reduce((previusColumn, currentColumn, index) => {
-        return previusColumn + ` ${currentColumn} = ? `;
+        return (lenght - 1) == index ? previusColumn + ` ${currentColumn} = ?  ` : previusColumn + ` ${currentColumn} = ? , `;
     }, '');
 }

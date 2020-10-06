@@ -37,6 +37,7 @@ export async function checkEmailIsUsed(user: { email: string, id?: number }) {
  * @param result resultados de la consulta donde se valida si existe o no un registro con la condicion indicada en la consulta
  */
 function isUsed(result: Array<any>) {
+    console.log(result?.length, result[0]?.count, result?.length && result[0]?.count > 0);
     return (result?.length && result[0]?.count > 0);
 }
 

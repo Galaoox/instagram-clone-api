@@ -40,7 +40,7 @@ export const updateProfile = async (req: Request, res: Response) => {
         path && deleteImage('./src/' + (<string>user.imageUrl));
         const data = { name, username, biography, path: path ? path : user.imageUrl, id: user.id, webSite } as ParamsUpdateInfoProfile;
         const usernameUsed = await checkUsernameIsUsed({ username, id: user.id });
-        if (!usernameUsed) return res.status(401).json({ msg: 'El usuario ingresado ya se encuentra en uso' });
+        if (usernameUsed) return res.status(401).json({ msg: 'El usuario ingresado ya se encuentra en uso' });
         await updateInfoProfile(data);
         return res.json({
             msg: 'Perfil editado exitosamente',

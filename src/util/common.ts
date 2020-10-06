@@ -13,7 +13,10 @@ export function createToken(user: Partial<User>) {
  */
 export function deleteImage(path: string) {
     try {
-        fs.unlinkSync(path)
+
+        if (fs.existsSync(path)) {
+            fs.unlinkSync(path)
+        }
     } catch (error) {
         console.error(error)
     }
@@ -22,9 +25,9 @@ export function deleteImage(path: string) {
  * Realiza la subida(creacion) de un archivo en este caso en base64
  * @param image JSON que contiene el tipo de imagen y el archivo en base64
  */
-export async function uploadImage(image: { typeImage: string, base64: string }) {
+export async function uploadImage(image: { type: string, base64: string }) {
     if (image) {
-        const filePath = image ? "uploads/" + uuidv4() + '.' + image.typeImage : null;
+        const filePath = image ? "uploads/" + uuidv4() + '.' + image.type : null;
         try {
             fs.writeFile(`./src/${filePath}`, image.base64, 'base64', (err) => {
                 if (err) throw err
