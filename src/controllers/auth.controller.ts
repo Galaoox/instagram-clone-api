@@ -55,7 +55,7 @@ export const singIn = async (req: Request, res: Response) => {
         await validateRequestSingIn(res, { email, password });
         const user: Partial<User> | null = await findUserByEmail(email);
         if (user) {
-            const match = await comparePassword(password, user.password)
+            const match = await comparePassword(password, user.password);
             if (match) {
                 res.json({
                     msg: "Inicio sessión correctamente",

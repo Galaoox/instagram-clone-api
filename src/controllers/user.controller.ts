@@ -42,9 +42,18 @@ export const updateProfile = async (req: Request, res: Response) => {
         const usernameUsed = await checkUsernameIsUsed({ username, id: user.id });
         if (usernameUsed) return res.status(401).json({ msg: 'El usuario ingresado ya se encuentra en uso' });
         await updateInfoProfile(data);
+        const token = authResponseWithToken({
+            name,
+            username,
+            biography,
+            imageUrl: path ? path : user.imageUrl,
+            webSite,
+            email: user.email,
+            id: user.id
+        });
         return res.json({
             msg: 'Perfil editado exitosamente',
-            ...authResponseWithToken(user)
+            ...token
         });
     } catch (error) {
         console.log("updateProfile" + error);
@@ -60,13 +69,12 @@ export const updateEmail = async (req: Request, res: Response) => {
         const { newEmail, password } = req.body;
         valdiateRequestUpdateEmail(res, { newEmail, password });
         const user: User = req.user as User;
-        const math = await comparePassword(password, user.password)
-        if (math) {
+
+        const match = await comparePassword(password, user.password)
+        if (match) {
             await updateEmailUser(newEmail, (<number>user.id));
             return res.status(201).json({
                 token: createToken({ id: user.id, email: newEmail }),
-                name: user.name,
-                username: user.username,
                 msg: 'Correo electronico editado exitosamente'
             });
         } else {
