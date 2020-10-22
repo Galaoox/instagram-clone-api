@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import { User } from '../util/models/user';
-import pool from '../config/database';
 import { comparePassword, encrypt } from "../util/bcrypt";
 import { createToken, deleteImage, uploadImage } from '../util/common';
-import { ParamsUpdateInfoProfile, updateEmailUser, updateInfoProfile, updatePasswordUser } from '../models/user.model';
+import { paginateUsers, ParamsUpdateInfoProfile, updateEmailUser, updateInfoProfile, updatePasswordUser } from '../models/user.model';
 import { authResponseWithToken } from './auth.controller';
 import { checkUsernameIsUsed } from "../models/auth.model";
 
@@ -131,3 +130,17 @@ function valdiateRequestUpdatePassword(res: Response, params: { password: string
     }
 }
 
+export const getUsers = async (req: Request, res: Response) => {
+    try {
+        const user = (<User>req.user);
+        const initial = Number(req.query.initial) as any;
+        const final = Number(req.query.final) as any;
+        console.log(initial, final);
+        const results = await paginateUsers(user.id as number, { initial, final });
+        res.json(results);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ msg: 'Ha ocurrido un error intenta mas tarde' });
+
+    }
+}

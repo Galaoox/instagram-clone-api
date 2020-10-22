@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import upload from '../util/multer';
-import { getDataEditProfile, updateEmail, updatePassword, updateProfile } from '../controllers/user.controller';
+import { getDataEditProfile, updateEmail, updatePassword, updateProfile, getUsers } from '../controllers/user.controller';
 const router: Router = Router();
 
 // editar usuario
@@ -21,5 +21,9 @@ router.put('/updateEmail',
 router.put('/updatePassword',
     passport.authenticate('jwt', { session: false }),
     updatePassword);
+
+router.get('/getUsers',
+    passport.authenticate('jwt', { session: false }),
+    getUsers);
 
 export default router;

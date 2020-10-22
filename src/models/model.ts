@@ -5,7 +5,7 @@ import pool from '../config/database';
  * @param sql consulta sql usada en la consulta
  * @param params parametros que seran usados en la consulta
  */
-export async function consult(sql: string, params: any) {
+export async function consult(sql: string, params: any = null) {
     return await pool.query(sql, params);
 }
 
