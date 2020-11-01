@@ -51,12 +51,16 @@ export async function updatePasswordUser(password: string, id: number) {
 }
 
 
-export async function paginateUsers(idUser: string | number, limit = { initial: 1, final: 10 }) {
-    const data = await consult(`SELECT id, name, username, imageUrl FROM  users WHERE id != ${idUser} LIMIT ${limit.initial} , ${limit.final} `);
+export async function paginateUsers(idUser: string | number, limit = { initial: 1, final: 10, term: '' }) {
+    const aditionalCondition = limit.term ? `AND username  LIKE '%${limit.term}%'` : '';
+    console.log(aditionalCondition);
+    const data = await consult(`SELECT id, name, username, imageUrl FROM  users 
+                                WHERE id != ${idUser} ${aditionalCondition}
+                                LIMIT ${limit.initial} , ${limit.final} `);
     limit.final += 10;
     limit.initial += 10;
     // TODO: AVERIGUAR LAS PROMESAS
-    const result: any = await consult(' SELECT COUNT(*) as total FROM users');
+    const result: any = await consult(`SELECT COUNT(*) as total FROM users WHERE id != ${idUser} ${aditionalCondition}`);
     const total = result ? result[0].total : 0;
     return { data, limit: limit, total };
 }

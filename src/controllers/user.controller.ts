@@ -135,8 +135,9 @@ export const getUsers = async (req: Request, res: Response) => {
         const user = (<User>req.user);
         const initial = Number(req.query.initial) as any;
         const final = Number(req.query.final) as any;
-        console.log(initial, final);
-        const results = await paginateUsers(user.id as number, { initial, final });
+        const term = req.query.term as string;
+        console.log(initial, final, term);
+        const results = await paginateUsers(user.id as number, { initial, final, term });
         res.json(results);
     } catch (error) {
         console.log(error);
